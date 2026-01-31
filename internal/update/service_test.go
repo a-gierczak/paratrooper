@@ -1,11 +1,12 @@
 package update
 
 import (
-	"asset-server/generated/db"
-	"asset-server/internal/util"
 	"context"
 	"path/filepath"
 	"testing"
+
+	"github.com/a-gierczak/paratrooper/generated/db"
+	"github.com/a-gierczak/paratrooper/internal/util"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"

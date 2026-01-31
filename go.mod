@@ -1,4 +1,4 @@
-module asset-server
+module github.com/a-gierczak/paratrooper
 
 go 1.22
 

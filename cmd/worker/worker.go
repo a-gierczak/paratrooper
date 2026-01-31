@@ -1,12 +1,13 @@
 package main
 
 import (
-	"asset-server/internal/logger"
-	"asset-server/internal/worker"
+	"log"
+
 	"github.com/Netflix/go-env"
+	"github.com/a-gierczak/paratrooper/internal/logger"
+	"github.com/a-gierczak/paratrooper/internal/worker"
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
-	"log"
 )
 
 func main() {

@@ -1,10 +1,11 @@
 package api
 
 import (
-	"asset-server/internal/logger"
-	"asset-server/internal/storage"
-	"asset-server/internal/util"
 	"net/http"
+
+	"github.com/a-gierczak/paratrooper/internal/logger"
+	"github.com/a-gierczak/paratrooper/internal/storage"
+	"github.com/a-gierczak/paratrooper/internal/util"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"

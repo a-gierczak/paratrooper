@@ -1,11 +1,12 @@
 package api
 
 import (
-	"asset-server/generated/api"
-	"asset-server/internal/storage"
 	"errors"
 	"slices"
 	"testing"
+
+	"github.com/a-gierczak/paratrooper/generated/api"
+	"github.com/a-gierczak/paratrooper/internal/storage"
 
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"

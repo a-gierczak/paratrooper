@@ -1,13 +1,14 @@
 package queue
 
 import (
-	"asset-server/internal/logger"
 	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/a-gierczak/paratrooper/internal/logger"
 
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"

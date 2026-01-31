@@ -1,10 +1,11 @@
 package cache
 
 import (
-	memorycache "asset-server/internal/cache/memory"
-	rediscache "asset-server/internal/cache/redis"
-	"asset-server/internal/logger"
 	"context"
+
+	memorycache "github.com/a-gierczak/paratrooper/internal/cache/memory"
+	rediscache "github.com/a-gierczak/paratrooper/internal/cache/redis"
+	"github.com/a-gierczak/paratrooper/internal/logger"
 )
 
 type Cache interface {

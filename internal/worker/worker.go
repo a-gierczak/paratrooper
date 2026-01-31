@@ -1,13 +1,14 @@
 package worker
 
 import (
-	"asset-server/generated/db"
-	"asset-server/internal/logger"
-	"asset-server/internal/queue"
-	"asset-server/internal/storage"
-	"asset-server/internal/update"
 	"context"
 	"fmt"
+
+	"github.com/a-gierczak/paratrooper/generated/db"
+	"github.com/a-gierczak/paratrooper/internal/logger"
+	"github.com/a-gierczak/paratrooper/internal/queue"
+	"github.com/a-gierczak/paratrooper/internal/storage"
+	"github.com/a-gierczak/paratrooper/internal/update"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"

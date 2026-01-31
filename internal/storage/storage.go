@@ -1,9 +1,6 @@
 package storage
 
 import (
-	"asset-server/generated/api"
-	"asset-server/internal/logger"
-	"asset-server/internal/util"
 	"context"
 	"crypto/rand"
 	"errors"
@@ -14,6 +11,10 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/a-gierczak/paratrooper/generated/api"
+	"github.com/a-gierczak/paratrooper/internal/logger"
+	"github.com/a-gierczak/paratrooper/internal/util"
 
 	"github.com/gin-gonic/gin/binding"
 	"github.com/google/uuid"

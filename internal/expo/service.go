@@ -1,13 +1,14 @@
 package expo
 
 import (
-	"asset-server/generated/db"
-	"asset-server/internal/storage"
 	"context"
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
 	"time"
+
+	"github.com/a-gierczak/paratrooper/generated/db"
+	"github.com/a-gierczak/paratrooper/internal/storage"
 
 	"gocloud.dev/blob"
 )

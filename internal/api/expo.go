@@ -1,12 +1,13 @@
 package api
 
 import (
-	"asset-server/generated/api"
 	"encoding/json"
 	"fmt"
 	"mime/multipart"
 	"net/http"
 	"net/textproto"
+
+	"github.com/a-gierczak/paratrooper/generated/api"
 )
 
 type expoUpdateMultipartResponse struct {

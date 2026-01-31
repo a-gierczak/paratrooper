@@ -1,22 +1,23 @@
 package api
 
 import (
-	"asset-server/generated/api"
-	"asset-server/generated/db"
-	"asset-server/internal/codepush"
-	"asset-server/internal/expo"
-	"asset-server/internal/infra"
-	"asset-server/internal/logger"
-	"asset-server/internal/project"
-	"asset-server/internal/storage"
-	"asset-server/internal/update"
-	"asset-server/internal/util"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/a-gierczak/paratrooper/generated/api"
+	"github.com/a-gierczak/paratrooper/generated/db"
+	"github.com/a-gierczak/paratrooper/internal/codepush"
+	"github.com/a-gierczak/paratrooper/internal/expo"
+	"github.com/a-gierczak/paratrooper/internal/infra"
+	"github.com/a-gierczak/paratrooper/internal/logger"
+	"github.com/a-gierczak/paratrooper/internal/project"
+	"github.com/a-gierczak/paratrooper/internal/storage"
+	"github.com/a-gierczak/paratrooper/internal/update"
+	"github.com/a-gierczak/paratrooper/internal/util"
 
 	semver "github.com/Masterminds/semver/v3"
 

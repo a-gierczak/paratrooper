@@ -1,10 +1,11 @@
 package project
 
 import (
-	"asset-server/generated/api"
-	"asset-server/generated/db"
 	"context"
 	"errors"
+
+	"github.com/a-gierczak/paratrooper/generated/api"
+	"github.com/a-gierczak/paratrooper/generated/db"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"

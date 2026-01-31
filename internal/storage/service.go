@@ -1,13 +1,14 @@
 package storage
 
 import (
-	"asset-server/internal/logger"
-	"asset-server/internal/util"
 	"context"
 	"fmt"
 	"io"
 	"io/fs"
 	"net/url"
+
+	"github.com/a-gierczak/paratrooper/internal/logger"
+	"github.com/a-gierczak/paratrooper/internal/util"
 
 	"gocloud.dev/blob"
 )

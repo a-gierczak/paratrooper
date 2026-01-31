@@ -1,10 +1,11 @@
 package api
 
 import (
-	"asset-server/generated/api"
 	"errors"
 	"fmt"
 	"net/http"
+
+	"github.com/a-gierczak/paratrooper/generated/api"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"

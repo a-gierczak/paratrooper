@@ -1,9 +1,10 @@
 package infra
 
 import (
-	"asset-server/internal/cache"
-	"asset-server/internal/queue"
 	"context"
+
+	"github.com/a-gierczak/paratrooper/internal/cache"
+	"github.com/a-gierczak/paratrooper/internal/queue"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )

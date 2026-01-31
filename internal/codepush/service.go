@@ -1,11 +1,12 @@
 package codepush
 
 import (
-	"asset-server/generated/api"
-	"asset-server/generated/db"
-	"asset-server/internal/storage"
 	"context"
 	"fmt"
+
+	"github.com/a-gierczak/paratrooper/generated/api"
+	"github.com/a-gierczak/paratrooper/generated/db"
+	"github.com/a-gierczak/paratrooper/internal/storage"
 	"gocloud.dev/blob"
 )
 

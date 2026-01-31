@@ -1,8 +1,9 @@
 package logger
 
 import (
-	"asset-server/generated/api"
 	"context"
+
+	"github.com/a-gierczak/paratrooper/generated/api"
 
 	"github.com/gin-gonic/gin"
 	strictgin "github.com/oapi-codegen/runtime/strictmiddleware/gin"

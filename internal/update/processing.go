@@ -2,11 +2,6 @@ package update
 
 import (
 	"archive/zip"
-	"asset-server/generated/db"
-	"asset-server/internal/logger"
-	"asset-server/internal/queue"
-	"asset-server/internal/storage"
-	"asset-server/internal/util"
 	"context"
 	"crypto/md5"
 	"crypto/sha256"
@@ -21,6 +16,12 @@ import (
 	"slices"
 	"strings"
 	"time"
+
+	"github.com/a-gierczak/paratrooper/generated/db"
+	"github.com/a-gierczak/paratrooper/internal/logger"
+	"github.com/a-gierczak/paratrooper/internal/queue"
+	"github.com/a-gierczak/paratrooper/internal/storage"
+	"github.com/a-gierczak/paratrooper/internal/util"
 
 	"github.com/google/uuid"
 	"github.com/nats-io/nats.go/jetstream"

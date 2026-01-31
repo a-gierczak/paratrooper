@@ -1,15 +1,16 @@
 package update
 
 import (
-	"asset-server/generated/api"
-	"asset-server/generated/db"
-	"asset-server/internal/logger"
-	"asset-server/internal/queue"
-	"asset-server/internal/storage"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+
+	"github.com/a-gierczak/paratrooper/generated/api"
+	"github.com/a-gierczak/paratrooper/generated/db"
+	"github.com/a-gierczak/paratrooper/internal/logger"
+	"github.com/a-gierczak/paratrooper/internal/queue"
+	"github.com/a-gierczak/paratrooper/internal/storage"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
