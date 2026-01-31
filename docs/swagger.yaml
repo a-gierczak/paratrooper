@@ -1,0 +1,606 @@
+openapi: 3.0.3
+info:
+  title: Paratrooper API
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Development server
+
+components:
+  parameters:
+    ProjectID:
+      name: projectID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    UpdateID:
+      name: updateID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  schemas:
+    ValidationFieldError:
+      type: object
+      properties:
+        field:
+          type: string
+        message:
+          type: string
+      required:
+        - field
+        - message
+
+    GenericError:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    UpdateStatus:
+      type: string
+      enum:
+        - "pending"
+        - "processing"
+        - "published"
+        - "failed"
+        - "canceled"
+
+    Update:
+      type: object
+      properties:
+        id:
+          type: string
+          x-go-name: ID
+          format: uuid
+        runtimeVersion:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/UpdateStatus'
+        message:
+          type: string
+        channel:
+          type: string
+      required:
+        - id
+        - runtimeVersion
+        - createdAt
+        - status
+        - message
+        - channel
+
+    UpdateMetadata:
+      type: object
+      required:
+        - version
+        - bundler
+        - fileMetadata
+      properties:
+        version:
+          type: integer
+          x-oapi-codegen-extra-tags:
+            binding: "required"
+        bundler:
+          type: string
+          x-oapi-codegen-extra-tags:
+            binding: "required,max=30"
+        fileMetadata:
+          type: object
+          additionalProperties:
+            type: object
+            required:
+              - bundle
+              - assets
+            properties:
+              bundle:
+                type: string
+                x-oapi-codegen-extra-tags:
+                  binding: "required"
+              assets:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - path
+                    - ext
+                  properties:
+                    path:
+                      type: string
+                      x-oapi-codegen-extra-tags:
+                        binding: "required"
+                    ext:
+                      type: string
+                      x-oapi-codegen-extra-tags:
+                        binding: "required"
+
+    UpdateProtocol:
+      type: string
+      enum:
+        - "expo"
+        - "codepush"
+      x-oapi-codegen-extra-tags:
+        binding: "required,oneof=expo codepush"
+
+    CreateProjectParams:
+      type: object
+      properties:
+        name:
+          type: string
+          x-oapi-codegen-extra-tags:
+            binding: "required,max=512"
+        updateProtocol:
+          $ref: '#/components/schemas/UpdateProtocol'
+      required:
+        - name
+        - updateProtocol
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          x-go-name: ID
+          format: uuid
+        name:
+          type: string
+        updateProtocol:
+          $ref: '#/components/schemas/UpdateProtocol'
+      required:
+        - id
+        - name
+        - updateProtocol
+
+    GetUpdatesResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/Update'
+
+    StorageObject:
+      type: object
+      properties:
+        path:
+          type: string
+          x-oapi-codegen-extra-tags:
+            binding: "required,asset_path,max=400"
+        contentType:
+          type: string
+          x-oapi-codegen-extra-tags:
+            binding: "required,max=60"
+        extension:
+          type: string
+          x-oapi-codegen-extra-tags:
+            binding: "required,max=10"
+        contentLength:
+          type: integer
+          x-oapi-codegen-extra-tags:
+            binding: "required,max_object_size"
+        md5Hash:
+          type: string
+          x-go-name: MD5Hash
+          x-oapi-codegen-extra-tags:
+            binding: "required,max=32"
+      required:
+        - path
+        - contentLength
+        - md5Hash
+        - extension
+        - contentType
+
+    StorageObjectPathWithURL:
+      type: object
+      properties:
+        path:
+          type: string
+        url:
+          type: string
+      required:
+        - path
+        - url
+
+    PrepareUpdateBody:
+      type: object
+      properties:
+        runtimeVersion:
+          type: string
+          x-oapi-codegen-extra-tags:
+            binding: "required,semver"
+        message:
+          type: string
+          x-oapi-codegen-extra-tags:
+            binding: "required,min=1,max=500"
+        channel:
+          type: string
+          x-oapi-codegen-extra-tags:
+            binding: "omitempty,printascii,max=100"
+        fileMetadata:
+          type: array
+          items:
+            $ref: '#/components/schemas/StorageObject'
+          x-oapi-codegen-extra-tags:
+            binding: "required,min=1,dive"
+        expoAppConfig:
+          type: object
+      required:
+        - runtimeVersion
+        - message
+        - fileMetadata
+
+    PrepareUpdateResponse:
+      type: object
+      properties:
+        updateID:
+          type: string
+          format: uuid
+        uploadURLs:
+          type: array
+          items:
+            $ref: '#/components/schemas/StorageObjectPathWithURL'
+      required:
+        - updateID
+        - uploadURLs
+
+    CodePushPackageInfo:
+      type: object
+      properties:
+        app_version:
+          type: string
+        description:
+          type: string
+        is_disabled:
+          type: boolean
+        label:
+          type: string
+        package_hash:
+          type: string
+        is_mandatory:
+          type: boolean
+        rollout:
+          type: number
+      required:
+        - app_version
+        - label
+        - package_hash
+        - is_mandatory
+
+    CodePushUpdate:
+      allOf:
+        - $ref: '#/components/schemas/CodePushPackageInfo'
+        - type: object
+          properties:
+            is_available:
+              type: boolean
+            package_size:
+              type: integer
+            update_app_version:
+              type: boolean
+            download_url:
+              x-go-name: DownloadURL
+              type: string
+            should_run_binary_version:
+              type: boolean
+            target_binary_range:
+              type: string
+          required:
+            - is_available
+            - package_size
+            - update_app_version
+            - download_url
+            - should_run_binary_version
+            - target_binary_range
+
+  responses:
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ValidationFieldError'
+            required:
+              - errors
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericError'
+
+paths:
+  /api/v1/health:
+    get:
+      summary: Health check
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+
+  /api/v1/admin/{projectID}/updates:
+    get:
+      summary: Get all updates
+      operationId: getUpdates
+      parameters:
+        - $ref: '#/components/parameters/ProjectID'
+        - name: status
+          in: query
+          description: Filter updates by status
+          required: false
+          schema:
+            $ref: '#/components/schemas/UpdateStatus'
+        - name: runtimeVersion
+          in: query
+          description: Filter updates by runtime version
+          required: false
+          schema:
+            type: string
+          x-oapi-codegen-extra-tags:
+            binding: "omitempty,semver"
+        - name: channel
+          in: query
+          description: Filter updates by channel
+          required: false
+          schema:
+            type: string
+          x-oapi-codegen-extra-tags:
+            binding: "omitempty,printascii,max=100"
+      responses:
+        '200':
+          description: A list of updates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUpdatesResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/admin/{projectID}/update/{updateID}:
+    get:
+      summary: Get update
+      operationId: getUpdate
+      parameters:
+        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/UpdateID'
+      responses:
+        '200':
+          description: Update details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Update"
+        '404':
+          description: Update doesn't exist
+        '400':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/v1/admin/{projectID}/update/{updateID}/commit:
+    post:
+      summary: Commit update
+      operationId: commitUpdate
+      parameters:
+        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/UpdateID'
+      responses:
+        '204':
+          description: Update committed
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/admin/{projectID}/update/{updateID}/rollback:
+    post:
+      summary: Rollback an update
+      operationId: rollbackUpdate
+      parameters:
+        - $ref: '#/components/parameters/ProjectID'
+        - $ref: '#/components/parameters/UpdateID'
+      responses:
+        '204':
+          description: Update rolled back
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/admin/project:
+    post:
+      summary: Create a project
+      operationId: createProject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectParams'
+      responses:
+        '200':
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/admin/project/{projectID}:
+    get:
+      summary: Get project by id
+      operationId: getProjectByID
+      parameters:
+        - $ref: '#/components/parameters/ProjectID'
+      responses:
+        '200':
+          description: Project
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '404':
+          description: Project not found
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/admin/{projectID}/update:
+    post:
+      summary: Prepare a new update
+      operationId: prepareUpdate
+      parameters:
+        - $ref: '#/components/parameters/ProjectID'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrepareUpdateBody'
+      responses:
+        '201':
+          description: Update prepared
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrepareUpdateResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/public/{projectID}/expo:
+    get:
+      summary: Get Expo update
+      operationId: getExpoUpdate
+      responses:
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '200':
+          description: Expo update
+          headers:
+            Expo-Protocol-Version:
+              schema:
+                type: string
+            Expo-Sfv-Version:
+              schema:
+                type: string
+            Cache-Control:
+              schema:
+                type: string
+          content:
+            multipart/mixed:
+              schema:
+                type: string
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      parameters:
+        - $ref: '#/components/parameters/ProjectID'
+        - name: Expo-Platform
+          in: header
+          schema:
+            type: string
+          x-oapi-codegen-extra-tags:
+            binding: "omitempty,required,max=8"
+        - name: platform
+          in: query
+          schema:
+            type: string
+          x-oapi-codegen-extra-tags:
+            binding: "omitempty,required,max=8"
+        - name: Expo-Runtime-Version
+          in: header
+          schema:
+            type: string
+          x-oapi-codegen-extra-tags:
+            binding: "omitempty,required,semver"
+        - name: runtime-version
+          in: query
+          schema:
+            type: string
+          x-oapi-codegen-extra-tags:
+            binding: "omitempty,required,semver"
+        - name: Expo-Current-Update-Id
+          in: header
+          schema:
+            type: string
+            format: uuid
+          x-oapi-codegen-extra-tags:
+            binding: "omitempty,required,uuid"
+        - name: current-update-id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          x-oapi-codegen-extra-tags:
+            binding: "omitempty,required,uuid"
+
+  /v0.1/public/codepush/update_check:
+    get:
+      operationId: GetCodePushUpdate
+      summary: Get CodePush update
+      parameters:
+        - name: app_version
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: deployment_key
+          in: query
+          schema:
+            type: string
+          required: true
+        - name: package_hash
+          in: query
+          schema:
+            type: string
+        - name: is_companion
+          in: query
+          schema:
+            type: boolean
+        - name: client_unique_id
+          in: query
+          schema:
+            type: string
+          x-oapi-codegen-extra-tags:
+            binding: "uuid_rfc4122"
+          x-go-name: ClientUniqueID
+      responses:
+        '200':
+          description: CodePush update
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - update_info
+                properties:
+                  update_info:
+                    $ref: '#/components/schemas/CodePushUpdate'
+        '400':
+          $ref: '#/components/responses/ValidationError'

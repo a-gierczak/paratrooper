@@ -1,0 +1,41 @@
+include:
+  - docker-compose.local.yml
+services:
+  paratrooper-api:
+    build:
+      context: .
+    command: ./bin/server
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    environment:
+      - POSTGRES_DSN=postgresql://paratrooper:secret@postgres:5432/paratrooper?sslmode=disable
+      - NATS_URL=nats://nats:4222
+      - STORAGE_PROVIDER=local
+      - STORAGE_LOCAL_PATH=/assets
+    volumes:
+      - ./assets:/assets
+      - ./.env:/app/.env
+    depends_on:
+      - postgres
+      - nats
+    networks:
+      - intranet
+
+  paratrooper-worker:
+    build:
+      context: .
+    command: ./bin/worker
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DSN=postgresql://paratrooper:secret@postgres:5432/paratrooper?sslmode=disable
+      - NATS_URL=nats://nats:4222
+      - STORAGE_LOCAL_PATH=/assets
+    volumes:
+      - ./assets:/assets
+      - ./.env:/app/.env
+    depends_on:
+      - postgres
+      - nats
+    networks:
+      - intranet

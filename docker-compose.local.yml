@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:13
+    volumes:
+      - ./db/init-test-db.sh:/docker-entrypoint-initdb.d/init.sh
+      - ./db/schema.sql:/tmp/schema.sql
+      - ./db/test-db-seed.sql:/tmp/test-db-seed.sql
+    restart: unless-stopped
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_USER=paratrooper
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=paratrooper
+    networks:
+      - intranet
+
+  nats:
+    image: nats:2.10
+    restart: unless-stopped
+    command: -js -m 8222
+    ports:
+      - 4222:4222
+      - 8222:8222
+      - 6222:6222
+    networks:
+      - intranet
+
+  redis:
+    image: redis:7.4
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    networks:
+      - intranet
+
+networks:
+  intranet:

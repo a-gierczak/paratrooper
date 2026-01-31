@@ -1,0 +1,7 @@
+.env
+assets/
+bin/
+gcp-service-account.json
+secret.key
+.vscode/
+.idea/
