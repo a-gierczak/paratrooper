@@ -118,7 +118,94 @@ The driver URL format follows the [gocloud.dev blob package](https://gocloud.dev
 
 ## Setting Up Your App
 
-<!-- TODO: Add guide for setting up existing React Native app projects to work with Paratrooper -->
+To integrate Paratrooper with your React Native app:
+
+1. **Start the Paratrooper API server** (see [Running](#running) section above)
+
+2. **Install the Paratrooper CLI**:
+   ```bash
+   npm install -g @paratrooper/cli
+   ```
+
+3. **Initialize Paratrooper in your app project**:
+   ```bash
+   cd /path/to/your/react-native-app
+   ota init
+   ```
+   Follow the prompts to configure your project.
+
+4. **Configure your app based on the protocol you're using**:
+
+### Expo / EAS Update
+
+Edit your `app.json` (or `app.config.js`) and configure the updates settings:
+
+```json
+{
+  "expo": {
+    "updates": {
+      "url": "https://<your_server_address>/api/v1/public/expo",
+      "requestHeaders": {
+        "Pt-Project-ID": "<paratrooper_project_id>"
+      }
+    }
+  }
+}
+```
+
+Replace:
+- `<your_server_address>` with your Paratrooper server URL
+- `<paratrooper_project_id>` with your project ID from Paratrooper
+
+### CodePush
+
+#### Android
+
+Edit `android/app/src/main/res/values/strings.xml` and add or update:
+
+```xml
+<string moduleConfig="true" name="CodePushServerUrl">http://[your_server_url]</string>
+<string moduleConfig="true" name="CodePushDeploymentKey">[your_project_id]/android/production</string>
+```
+
+#### iOS
+
+Edit `ios/YourAppName/Info.plist` and add or update:
+
+```xml
+<key>CodePushServerURL</key>
+<string>http://[your_server_url]</string>
+<key>CodePushDeploymentKey</key>
+<string>[your_project_id]/ios/production</string>
+```
+
+Replace:
+- `your_server_url` with your Paratrooper server URL
+- `your_project_id` with your project ID from Paratrooper
+
+## Publishing Updates
+
+Once your app is configured, you can publish updates using the Paratrooper CLI:
+
+### Publishing an Update
+
+To publish a new update, run:
+
+```bash
+ota update
+```
+
+Follow the prompts to configure your update (select project, platform, channel, etc.).
+
+### Rolling Back an Update
+
+To rollback a previously published update:
+
+```bash
+ota rollback <update_id>
+```
+
+Replace `<update_id>` with the ID of the update you want to rollback.
 
 ## License
 
